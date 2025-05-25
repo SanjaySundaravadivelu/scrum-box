@@ -26,7 +26,7 @@ const Pricing = ({ user }) => {
               </p>
               <br />
               <p className="mt-4 text-lg leading-relaxed text-slate-2 00">
-                Don't worry we have special offers for you 😇
+                Don&#39;t worry we have special offers for you 😇
               </p>
               <br />
             </>
@@ -58,7 +58,7 @@ const Pricing = ({ user }) => {
                   />
                 </svg>
                 <h2 className="text-sm font-semibold text-gray-700">
-                  What's included with your Full Access Pass
+                  What&#39;s included with your Full Access Pass
                 </h2>
               </div>
 

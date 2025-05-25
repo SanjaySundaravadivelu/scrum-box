@@ -1,13 +1,11 @@
 "use client";
 
 import { OrganizationList, useOrganization } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { setCookie } from "cookies-next"; // Or a similar library
 
 export default function OrgList() {
   const { organization, membership } = useOrganization();
-  const router = useRouter();
 
   useEffect(() => {
     if (organization) {

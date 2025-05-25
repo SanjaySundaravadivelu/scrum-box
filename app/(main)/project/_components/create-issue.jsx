@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PlusCircleIcon, TrophyIcon } from "lucide-react";
+import { PlusCircleIcon, TrophyIcon, AlertCircle } from "lucide-react";
 import { getEpicsForProject, createEpic } from "@/actions/epics";
 import MDEditor from "@uiw/react-md-editor";
 import useFetch from "@/hooks/use-fetch";

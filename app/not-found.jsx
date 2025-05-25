@@ -265,7 +265,7 @@ export default function NotFound() {
               </svg>
             </div>
             <p class="text-sm md:text-base text-yellow-300 p-2 mb-4">
-              The stuff you were looking for doesn't exist
+              The stuff you were looking for doesn&#39;t exist
             </p>
             <a
               href="/"

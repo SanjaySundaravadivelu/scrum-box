@@ -27,8 +27,7 @@ const faqs = [
   },
   {
     question: "How does ScrumBox stand out from other tools?",
-    answer:
-      "ScrumBox combines the simplicity of a user-friendly interface with the depth needed for complex agile workflows. Whether you're running sprints, managing backlogs, or tracking issues, ScrumBox adapts to your team's needs with ease.",
+    answer: `ScrumBox combines the simplicity of a user-friendly interface with the depth needed for complex agile workflows. Whether you are running sprints, managing backlogs, or tracking issues, ScrumBox adapts to your team needs with ease.`,
   },
   {
     question: "Is ScrumBox good for startups and small teams?",

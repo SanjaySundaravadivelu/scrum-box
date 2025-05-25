@@ -17,7 +17,6 @@ import jsPDF from "jspdf";
 import dayjs from "dayjs";
 import IssuesByPriorityChart from "./IssuesByPriorityChart";
 import GaugeComponent from "./gauge";
-const COLORS = ["#82ca9d", "#8884d8", "#ff7300", "#ffc658"];
 
 const Analytics = ({ sprint, issues = [] }) => {
   const [issuesByStatus, setIssuesByStatus] = useState({});
