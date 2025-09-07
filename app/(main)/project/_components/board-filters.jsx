@@ -62,7 +62,7 @@ export default function BoardFilters({ issues, onFilterChange, sprint }) {
     <div className="space-y-4">
       <div className="flex flex-col pr-2 sm:flex-row gap-4 sm:gap-6 mt-6">
         <Input
-          className="w-full sm:w-72 border-slate-100"
+          className="w-full sm:w-72 border-b-2 "
           placeholder="Search issues..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}

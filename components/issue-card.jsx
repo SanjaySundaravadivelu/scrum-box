@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -23,21 +23,50 @@ const priorityColor = {
 
 export default function IssueCard({
   issue,
+  blockers = [],
   showStatus = false,
   onDelete = () => {},
   onUpdate = () => {},
+  onBlockerCreate = () => {},
+  onBlockerUpdate = () => {},
+  onBlockerDelete = () => {},
 }) {
+  useEffect(() => {
+    console.log("Blockers", blockers);
+  }, []);
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [currBlocker, setCurrBlocker] = useState(null);
+
   const router = useRouter();
+
+  useEffect(() => {
+    // since blocker.id === issue.id, just find one
+    if (blockers && blockers.length > 0) {
+      const found = blockers.find((b) => b.id === issue.id) || null;
+      setCurrBlocker(found);
+    }
+  }, [blockers, issue.id]);
 
   const onDeleteHandler = (...params) => {
     router.refresh();
     onDelete(...params);
+    onBlockerDelete(issue.id);
   };
 
   const onUpdateHandler = (...params) => {
     router.refresh();
     onUpdate(...params);
+  };
+
+  const handleBlockerUpdate = (...params) => {
+    router.refresh();
+    onBlockerUpdate(...params);
+  };
+
+  const handleBlockerCreate = (...params) => {
+    router.refresh();
+    onBlockerCreate(...params);
   };
 
   const created = formatDistanceToNow(new Date(issue.createdAt), {
@@ -61,14 +90,13 @@ export default function IssueCard({
           <Badge variant="outline" className="-ml-1">
             {issue.priority}
           </Badge>
-
           <Badge variant="outline" className="-ml-1">
             {issue.points}
           </Badge>
         </CardContent>
+
         <CardFooter className="flex flex-col items-start space-y-3">
           <UserAvatar user={issue.assignee} />
-
           <div className="text-xs text-gray-400 w-full">Created {created}</div>
         </CardFooter>
       </Card>
@@ -81,6 +109,9 @@ export default function IssueCard({
           onDelete={onDeleteHandler}
           onUpdate={onUpdateHandler}
           borderCol={priorityColor[issue.priority]}
+          blocker={currBlocker}
+          BlockerCreate={handleBlockerCreate}
+          BlockerUpdate={handleBlockerUpdate}
         />
       )}
     </>

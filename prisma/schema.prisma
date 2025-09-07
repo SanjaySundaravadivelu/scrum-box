@@ -83,6 +83,18 @@ model Epic {
   updatedAt   DateTime @updatedAt
 }
 
+model Blocker {
+  id          String   @id            
+  reporter    Json    
+  responsible Json[]  
+  reason      String
+  isResolved  Boolean  @default(false)
+  resolvedAt  DateTime?
+  history     Json[]   
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 
 enum SprintStatus {
   PLANNED

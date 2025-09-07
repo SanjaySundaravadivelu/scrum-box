@@ -10,6 +10,12 @@ import useFetch from "@/hooks/use-fetch";
 
 import statuses from "@/data/status";
 import { getIssuesForSprint, updateIssueOrder } from "@/actions/issues";
+import {
+  getBlocker, 
+  createBlocker,
+  updateBlocker,
+  deleteBlocker,
+} from "@/actions/blockers";
 
 import SprintManager from "./sprint-manager";
 import IssueCreationDrawer from "./create-issue";
@@ -39,7 +45,13 @@ export default function SprintBoard({ sprints, projectId, orgId }) {
     data: issues,
     setData: setIssues,
   } = useFetch(getIssuesForSprint);
-
+  const {
+    loading: blockersLoading,
+    error: blockersError,
+    fn: fetchBlockers,
+    data: blockers,
+    setData: setBlockers,
+  } = useFetch(getBlocker);
   const [filteredIssues, setFilteredIssues] = useState(issues);
 
   const handleFilterChange = (newFilteredIssues) => {
@@ -49,6 +61,7 @@ export default function SprintBoard({ sprints, projectId, orgId }) {
   useEffect(() => {
     if (currentSprint.id) {
       fetchIssues(currentSprint.id);
+      fetchBlockers();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentSprint.id]);
@@ -79,9 +92,7 @@ export default function SprintBoard({ sprints, projectId, orgId }) {
     }
     const { destination, source } = result;
 
-    if (!destination) {
-      return;
-    }
+    if (!destination) return;
 
     if (
       destination.droppableId === source.droppableId &&
@@ -92,11 +103,9 @@ export default function SprintBoard({ sprints, projectId, orgId }) {
 
     const newOrderedData = [...issues];
 
-    // source and destination list
     const sourceList = newOrderedData.filter(
       (list) => list.status === source.droppableId
     );
-
     const destinationList = newOrderedData.filter(
       (list) => list.status === destination.droppableId
     );
@@ -107,34 +116,55 @@ export default function SprintBoard({ sprints, projectId, orgId }) {
         source.index,
         destination.index
       );
-
       reorderedCards.forEach((card, i) => {
         card.order = i;
       });
     } else {
-      // remove card from the source list
       const [movedCard] = sourceList.splice(source.index, 1);
-
-      // assign the new list id to the moved card
       movedCard.status = destination.droppableId;
-
-      // add new card to the destination list
       destinationList.splice(destination.index, 0, movedCard);
 
-      sourceList.forEach((card, i) => {
-        card.order = i;
-      });
-
-      // update the order for each card in destination list
-      destinationList.forEach((card, i) => {
-        card.order = i;
-      });
+      sourceList.forEach((card, i) => (card.order = i));
+      destinationList.forEach((card, i) => (card.order = i));
     }
 
     const sortedIssues = newOrderedData.sort((a, b) => a.order - b.order);
     setIssues(newOrderedData, sortedIssues);
 
     updateIssueOrderFn(sortedIssues);
+  };
+
+  // ✅ Blocker handlers
+  const handleCreateBlocker = async (issueId, data) => {
+    try {
+      await createBlocker(issueId, data);
+      toast.success("Blocker created");
+      fetchIssues(currentSprint.id);
+      fetchBlockers();
+    } catch (err) {
+      toast.error("Failed to create blocker");
+    }
+  };
+
+  const handleUpdateBlocker = async (issueId, data) => {
+    try {
+      await updateBlocker(issueId, data);
+      toast.success("Blocker updated");
+      fetchIssues(currentSprint.id);
+      fetchBlockers();
+    } catch (err) {
+      toast.error("Failed to update blocker");
+    }
+  };
+
+  const handleDeleteBlocker = async (issueId) => {
+    try {
+      await deleteBlocker(issueId);
+      toast.success("Blocker deleted");
+      fetchIssues(currentSprint.id);
+    } catch (err) {
+      toast.error("Failed to delete blocker");
+    }
   };
 
   if (issuesError) return <div>Error loading issues</div>;
@@ -192,16 +222,21 @@ export default function SprintBoard({ sprints, projectId, orgId }) {
                             {...provided.dragHandleProps}
                           >
                             <IssueCard
+                              orgId={orgId}
                               issue={issue}
                               onDelete={() => fetchIssues(currentSprint.id)}
                               onUpdate={(updated) =>
                                 setIssues((issues) =>
-                                  issues.map((issue) => {
-                                    if (issue.id === updated.id) return updated;
-                                    return issue;
-                                  })
+                                  issues.map((i) =>
+                                    i.id === updated.id ? updated : i
+                                  )
                                 )
                               }
+                              // ✅ Blocker actions
+                              onBlockerCreate={handleCreateBlocker}
+                              onBlockerUpdate={handleUpdateBlocker}
+                              onBlockerDelete={handleDeleteBlocker}
+                              blockers={blockers}
                             />
                           </div>
                         )}
